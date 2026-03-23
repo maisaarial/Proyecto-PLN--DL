@@ -33,8 +33,24 @@ class EuskadiCamerasClient:
         self.timeout = timeout
 
     def fetch_raw(self) -> Any:
-        response = requests.get(self.json_url, timeout=self.timeout)
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json,text/plain,*/*",
+        }
+
+        response = requests.get(
+            self.json_url,
+            timeout=self.timeout,
+            headers=headers,
+            allow_redirects=True,
+        )
         response.raise_for_status()
+
+        print("STATUS:", response.status_code)
+        print("CONTENT-TYPE:", response.headers.get("Content-Type"))
+        print("FINAL URL:", response.url)
+        print("PREVIEW:", response.text[:300])
+
         return response.json()
 
     def save_raw(self, output_path: str | Path) -> Path:
